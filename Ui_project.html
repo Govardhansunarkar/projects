@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UI Project</title>
+  <link rel="stylesheet" href="ui_styles.css" />
+
+</head>
+<body>
+  <h1>This is my UI Project</h1>
+
+  <div id="inputBox">
+    <label>Name</label>
+    <input type="text" id="text" class="box" placeholder="Type your Name..." required>
+
+    <label>Email</label>
+    <input type="email" id="email" class="box" placeholder="Type your Email..." required>
+
+    <label>Password</label>
+    <input type="password" id="password" class="box" placeholder="Type your Password..." required>
+  </div>
+
+  <div class="button">
+    <button onclick="showData()">Submit</button>
+  </div>
+
+  <div id="output">
+    <h3>Submitted Entries:</h3>
+  </div>
+
+  <script>
+    window.onload = function () {
+      const storedEntries = JSON.parse(localStorage.getItem("userEntries")) || [];
+      storedEntries.forEach((entry, index) => displayEntry(entry, index));
+    };
+  
+    function showData() {
+      const nameInput = document.getElementById("text");
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+  
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+  
+      if (!name || !email || !password) {
+        alert("Please fill all fields!");
+        return;
+      }
+  
+      const newEntry = {  
+        name: name,
+        email: email,
+        password: password
+      };
+  
+      let entries = JSON.parse(localStorage.getItem("userEntries")) || [];
+      entries.push(newEntry);
+      localStorage.setItem("userEntries", JSON.stringify(entries));
+  
+      displayEntry(newEntry, entries.length - 1);
+  
+      nameInput.value = "";
+      emailInput.value = "";
+      passwordInput.value = "";
+    }
+  
+    function displayEntry(entry, index) {
+      const output = document.getElementById("output");
+  
+      const entryDiv = document.createElement("div");
+      entryDiv.className = "entry";
+      entryDiv.setAttribute("data-index", index);
+      entryDiv.innerHTML = `
+        <p><strong>Name:</strong> ${entry.name}</p>
+        <p><strong>Email:</strong> ${entry.email}</p>
+        <p><strong>Password:</strong> ${entry.password}</p>
+        <button onclick="deleteEntry(${index})">Delete</button>
+      `;
+  
+      output.appendChild(entryDiv);
+    }
+  
+    function deleteEntry(index) {
+      let entries = JSON.parse(localStorage.getItem("userEntries")) || [];
+  
+      entries.splice(index, 1);
+
+      localStorage.setItem("userEntries", JSON.stringify(entries));
+  
+      document.getElementById("output").innerHTML = "<h3>Submitted Entries:</h3>";
+      entries.forEach((entry, i) => displayEntry(entry, i));
+    }
+  </script>
+  
+  
+</body>
+</html>
